@@ -9,23 +9,22 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "bootstrap": "^4.1.1",
-    "express": "^4.16.3",
+    "lodash": "^4.17.10",
     "md5": "^2.2.1",
-    "react-responsive-modal": "^3.0.3",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "@fortawesome/fontawesome-free": "^5.2.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.5.2",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.11",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-modal": "^3.5.1",
     "style-loader": "^0.20.3",
     "webpack": "^3.1.0",
     "webpack-dev-server": "^2.5.1"
