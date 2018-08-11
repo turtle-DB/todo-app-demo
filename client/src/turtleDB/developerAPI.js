@@ -1,30 +1,21 @@
 import md5 from 'md5';
 import uuidv4 from 'uuid/v4';
-import SyncTo from './syncTo';
-import SyncFrom from './syncFrom';
 
 const developerAPI = {
-  syncTo(remoteURL) {
-    return new Promise((resolve, reject) => {
-      const syncTo = new SyncTo('http://localhost:3000');
-      syncTo.idb = this.idb;
-      return syncTo.start();
-    })
-  },
-
-  syncFrom(remoteURL) {
-    return new Promise((resolve, reject) => {
-      const syncFrom = new SyncFrom('http://localhost:3000');
-      syncFrom.idb = this.idb;
-      return syncFrom.getTurtleID()
-      .then(() => syncFrom.start());
-    })
+  setRemote(remoteUrl) {
+    this.remoteUrl = remoteUrl;
   },
 
   sync() {
-    this.syncTo()
-      .then(() => this.syncFrom())
-      .catch((err) => console.log(err));
+    if (!this.syncInProgress) {
+      this.syncInProgress = true;
+      return this.syncTo()
+        .then(() => this.syncFrom())
+        .then(() => this.syncInProgress = false)
+        .catch((err) => console.log(err));
+    } else {
+      return Promise.reject('Sync already in progress');
+    }
   },
 
   create(data) {
@@ -51,6 +42,12 @@ const developerAPI = {
 
       return this.idb.command(this.idb._meta, "CREATE", { data: metaDoc })
         .then(() => this.idb.command(this.idb._store, "CREATE", { data: newDoc }))
+        .then(() => {
+          const data = Object.assign({}, newDoc);
+          [data._id, data._rev] = data._id_rev.split('::');
+          delete data._id_rev;
+          return data;
+        })
         .catch(err => console.log("Create error:", err));
     } else {
       console.log('Please pass in a valid object.');
@@ -78,7 +75,7 @@ const developerAPI = {
       })
       .then(doc => {
         const data = Object.assign({}, doc);
-        [ data._id, data._rev ] = data._id_rev.split('::');
+        [data._id, data._rev] = data._id_rev.split('::');
         delete data._id_rev;
         return data;
       })
@@ -89,12 +86,12 @@ const developerAPI = {
   update(_id, newProperties, revId = null) {
     let metaDoc;
     let newDoc;
+    let rev;
 
     return this._readMetaDoc(_id)
       .then(doc => {
         // save metaDoc to be used later
         metaDoc = doc;
-        let rev;
 
         if (!metaDoc._winningRev) {
           throw new Error("This document has been deleted.");
@@ -108,15 +105,16 @@ const developerAPI = {
           }
         }
 
-        return this._readRevFromIndex(_id, rev);
+        // return this._readRevFromIndex(_id, rev);
+        return rev;
       })
-      .then(oldDoc => {
-        newDoc = this._generateNewDoc(oldDoc, newProperties, metaDoc);
+      .then(oldRev => {
+        newDoc = this._generateNewDoc(_id, oldRev, newProperties);
         this.idb.command(this.idb._store, "CREATE", { data: newDoc });
 
         return {
           newRev: newDoc._id_rev.split('::')[1],
-          oldRev: oldDoc._id_rev.split("::")[1]
+          oldRev: rev
         };
       })
       .then(({ newRev, oldRev }) => {
@@ -135,7 +133,7 @@ const developerAPI = {
       })
       .then(() => {
         const data = Object.assign({}, newDoc);
-        [ data._id, data._rev ] = data._id_rev.split('::');
+        [data._id, data._rev] = data._id_rev.split('::');
         delete data._id_rev;
         return data;
       })
@@ -146,18 +144,67 @@ const developerAPI = {
     return this.update(_id, { _deleted: true }, revId);
   },
 
+
+  autoSyncOn() {
+    this.intervalId = setInterval(this.sync.bind(this), 3000);
+  },
+
+  autoSyncOff() {
+    clearInterval(this.intervalId);
+  },
+
+  compactStore() {
+    const allLeafIdRevs = [];
+
+    return this.idb.command(this.idb._meta, "READ_ALL", {})
+      .then((metaDocs) => {
+        metaDocs.forEach(metaDoc => {
+          let idRevs = metaDoc._leafRevs.map(rev => metaDoc._id + '::' + rev);
+          allLeafIdRevs.push(...idRevs);
+        });
+
+        this.idb.getStore(this.idb._store, 'readwrite').openCursor().onsuccess = (e) => {
+          let cursor = e.target.result;
+
+          if (cursor) {
+            let doc = cursor.value;
+            // If document is not a leaf rev
+            if (!allLeafIdRevs.includes(doc._id_rev) && !doc._deleted) {
+              var request = cursor.delete();
+            }
+            cursor.continue();
+          } else {
+            console.log('Compation deletion finished!');
+          }
+        }
+      })
+  },
+
+  getStorageInfo() {
+    return navigator.storage.estimate()
+      .then(({ quota, usage }) => {
+        return {
+          // Quota here is total/shared temporary storage space available for all Chrome apps
+          // Technically, one app/origin (like localhost) only has access to 20% of this value
+          appUsage: this.sizeOf(usage),
+          appQuota: this.sizeOf(quota * 0.2),
+          totalQuota: this.sizeOf(quota)
+        };
+      });
+  },
+
   // BULK OPERATIONS
 
-  readAllValues() {
+  readAll() {
     return this.idb.command(this.idb._meta, "READ_ALL", {})
-     .then(metaDocs => {
-       let promises = metaDocs.map(doc => this._readWithoutDeletedError(doc._id));
-       return Promise.all(promises);
-     })
-     .then(docs => {
-       return docs.filter(doc => doc);
-     })
-     .catch(err => console.log("readAllValues error:", err));
+      .then(metaDocs => {
+        let promises = metaDocs.map(doc => this._readWithoutDeletedError(doc._id));
+        return Promise.all(promises);
+      })
+      .then(docs => {
+        return docs.filter(doc => doc);
+      })
+      .catch(err => console.log("readAll error:", err));
   },
 
   filterBy(selector) {

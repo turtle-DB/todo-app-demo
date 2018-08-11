@@ -232,9 +232,11 @@ body {
   width: 18px;
   z-index: 1;
 }
+
 #app #items-outer-container #items-container #items .item .item-edit svg path, #app #items-outer-container #items-container #items .item .item-delete svg path {
   fill: #3c3c3c;
 }
+
 #app #items-outer-container #items-container #items .item .item-name-input {
   margin-left: 20px;
   width: calc(100% - 120px);
@@ -290,4 +292,21 @@ body {
   to {
     opacity: 1;
   }
+}
+
+#sync {
+  margin: 30px;
+  width: 100px;
+  height: 50px;
+  border: 2px solid white;
+  border-radius: 5px;
+  background: #00AFF9;
+  color: white;
+}
+
+#sync:hover {
+  border: 2px solid #00AFF9;
+  background: white;
+  color: #00AFF9;
+  cursor: pointer;
 }

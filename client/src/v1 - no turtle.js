@@ -1,10 +1,14 @@
+// https://codepen.io/TheVVaFFle/pen/PBGbyq
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import '@fortawesome/fontawesome-free/js/all.js';
+import axios from 'axios';
 
 import './styles/index.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
+
+import TurtleDB from './turtleDB/turtleDB';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,59 +20,129 @@ class App extends React.Component {
     this.deleteItem = this.deleteItem.bind(this)
     this.setItemHeight = this.setItemHeight.bind(this)
     this.getItemCountText = this.getItemCountText.bind(this)
+    this.syncClick = this.syncClick.bind(this);
+    this.loadAllTodos = this.loadAllTodos.bind(this);
     this.state = {
       item: {
         height: 60
       },
-      items: [
-        { id: 1, name: 'Go to the store', isCompleted: false, height: 0 },
-        { id: 2, name: 'Walk the dog', isCompleted: false, height: 0 },
-        { id: 3, name: 'Hit the gym', isCompleted: false, height: 0 }
-      ]
+      items: []
     }
-  }
-  componentDidMount() {
-    setTimeout(() => this.toggleItem(1), 700)
-  }
-  getMeta() {
-    const { items } = this.state,
-      completed = items.filter(item => item.isCompleted),
-      uncompleted = items.filter(item => !item.isCompleted)
 
-    return {
-      completed: {
-        items: completed,
-        height: completed.length > 0 ? _.sumBy(completed, 'height') : 0
-      },
-      uncompleted: {
-        items: uncompleted,
-        height: uncompleted.length > 0 ? _.sumBy(uncompleted, 'height') : 0
-      }
-    }
+    this.dbUrl = 'http://localhost:3000/todos';
+
+    // this.db = new TurtleDB('todos');
+    // this.db.setRemote('http://localhost:3000');
   }
-  toggleItem(id) {
-    const updatedItems = this.state.items
-      .map(item => ({ ...item, isCompleted: item.id === id ? !item.isCompleted : item.isCompleted }))
-    this.setState({ items: updatedItems })
+
+  componentDidMount() {
+    this.loadAllTodos();
   }
+
+  loadAllTodos() {
+    // this.db.readAll()
+    //   .then((todos) => {
+    //     this.setState({ items: todos });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
+
+    axios.get(this.dbUrl)
+      .then(({ data: { todos } }) => {
+        this.setState({ items: todos });
+      })
+      .catch((err) => console.log('Error:', err));
+  }
+
   addItem(name) {
-    let updatedItems = [...this.state.items]
-    updatedItems.push({ id: 0, name, isCompleted: false })
-    updatedItems = updatedItems.map((item, index) => {
-      const newItem = { ...item, id: index + 1 }
-      return newItem
-    })
-    this.setState({ items: updatedItems })
+    const updatedItems = [...this.state.items];
+
+    const newItem = {
+      name: name,
+      height: 60,
+      isCompleted: false
+    };
+
+    // this.db.create(newItem)
+    //   .then((todo) => {
+    //     updatedItems.push(todo);
+    //     this.setState({ items: updatedItems })
+    //   })
+    //   .catch((err) => console.log('Error:', err));
+
+
+    axios.post(this.dbUrl, newItem)
+      .then(({ data: { todo } }) => {
+        updatedItems.push(todo);
+        this.setState({ items: updatedItems })
+      })
+      .catch((err) => console.log('Error:', err));
   }
-  editItem(id, name) {
-    const updatedItems = this.state.items
-      .map(item => ({ ...item, name: item.id === id ? name : item.name }))
-    this.setState({ items: updatedItems })
+
+  editItem(_id, name) {
+    let updatedItems;
+    const oldItems = this.state.items;
+    const oldItem = oldItems.find(item => item._id === _id);
+    const newItem = Object.assign(oldItem, { name: name });
+
+    // this.db.update(_id, newItem)
+    //   .then((updatedTodo) => {
+    //     updatedItems = oldItems.map(item => item._id === _id ? updatedTodo : item);
+    //     this.setState({ items: updatedItems });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
+
+    axios.put(this.dbUrl + '/' + _id, newItem)
+      .then(({ data: { todo } }) => {
+        updatedItems = oldItems.map(item => item._id === _id ? todo : item);
+        this.setState({ items: updatedItems });
+      })
+      .catch((err) => console.log('Error:', err));
   }
-  deleteItem(id) {
-    let updatedItems = [...this.state.items].filter(item => item.id !== id)
-    this.setState({ items: updatedItems })
+
+  toggleItem(_id) {
+    let updatedItems;
+    const oldItems = this.state.items;
+    const oldItem = oldItems.find(item => item._id === _id);
+    const newItem = Object.assign(oldItem, { isCompleted: !oldItem.isCompleted });
+
+    // this.db.update(_id, newItem)
+    //   .then((updatedTodo) => {
+    //     updatedItems = oldItems.map(item => item._id === _id ? updatedTodo : item);
+    //     this.setState({ items: updatedItems });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
+
+    axios.put(this.dbUrl + '/' + _id, newItem)
+      .then(({ data: { todo } }) => {
+        updatedItems = oldItems.map(item => item._id === _id ? todo : item);
+        this.setState({ items: updatedItems });
+      })
+      .catch((err) => console.log('Error:', err));
   }
+
+  deleteItem(_id) {
+    // this.db.delete(_id)
+    //   .then(() => {
+    //     let updatedItems = [...this.state.items].filter(item => item._id !== _id)
+    //     this.setState({ items: updatedItems });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
+
+    axios.delete(this.dbUrl + '/' + _id)
+      .then(({ data: { todo } }) => {
+        let updatedItems = [...this.state.items].filter(item => item._id !== _id)
+        this.setState({ items: updatedItems });
+      })
+      .catch((err) => console.log('Error:', err));
+  }
+
+  syncClick() {
+    // this.db.sync()
+    //   .then(() => this.loadAllTodos());
+
+    this.loadAllTodos();
+  }
+
   setItemHeight(id, height) {
     const updatedItems = this.state.items
       .map(item => {
@@ -79,6 +153,7 @@ class App extends React.Component {
       })
     this.setState({ items: updatedItems })
   }
+
   getItemCountText() {
     const meta = this.getMeta()
     let itemCountText = ''
@@ -91,6 +166,24 @@ class App extends React.Component {
     }
     return itemCountText
   }
+
+  getMeta() {
+    const { items } = this.state;
+    const completed = items.filter(item => item.isCompleted);
+    const uncompleted = items.filter(item => !item.isCompleted);
+
+    return {
+      completed: {
+        items: completed,
+        height: completed.length > 0 ? _.sumBy(completed, 'height') : 0
+      },
+      uncompleted: {
+        items: uncompleted,
+        height: uncompleted.length > 0 ? _.sumBy(uncompleted, 'height') : 0
+      }
+    }
+  }
+
   render() {
     const meta = this.getMeta()
 
@@ -99,16 +192,16 @@ class App extends React.Component {
     const items = this.state.items
       .map((item, index) => (
         <Item
-          key={item.id}
-          id={item.id}
+          key={item._id}
+          _id={item._id}
           index={item.isCompleted ? cInd++ : uInd++}
           height={item.height}
           name={item.name}
           meta={meta}
           isCompleted={item.isCompleted}
-          toggleItem={() => this.toggleItem(item.id)}
+          toggleItem={() => this.toggleItem(item._id)}
           editItem={this.editItem}
-          deleteItem={() => this.deleteItem(item.id)}
+          deleteItem={() => this.deleteItem(item._id)}
           setItemHeight={this.setItemHeight}
         />
       ))
@@ -149,6 +242,12 @@ class App extends React.Component {
             <i className="fas fa-arrow-right" />
             <h1>Double click todo text to edit</h1>
           </div>
+        </div>
+        <div>
+          <button
+            id="sync"
+            onClick={this.syncClick}
+          >Sync</button>
         </div>
       </div>
     )
@@ -192,19 +291,14 @@ class Item extends React.Component {
       isEditing: false
     }
   }
+
   componentDidMount() {
     const height = this.refs.item.getBoundingClientRect().height
-    this.props.setItemHeight(this.props.id, height)
+    this.props.setItemHeight(this.props._id, height)
   }
-  componentDidUpdate() {
-    const height = this.refs.item.getBoundingClientRect().height
-    if (height !== this.props.height) {
-      console.log(height, this.props.height)
-      this.props.setItemHeight(this.props.id, height)
-    }
-  }
+
   getTop() {
-    const { meta, id, index, height, isCompleted } = this.props
+    const { meta, _id, index, height, isCompleted } = this.props
 
     const prevHeight = isCompleted ?
       _.sumBy(meta.completed.items.slice(0, index), 'height') :
@@ -215,11 +309,13 @@ class Item extends React.Component {
 
     return top
   }
+
   toggleEdit() {
     this.setState({ isEditing: !this.state.isEditing })
   }
+
   render() {
-    const { name, id, height, index, isCompleted, toggleItem, deleteItem, editItem } = this.props
+    const { name, _id, height, index, isCompleted, toggleItem, deleteItem, editItem } = this.props
     const { isEditing } = this.state
     let classes = isCompleted ? "item completed" : "item",
       top = this.getTop()
@@ -228,7 +324,7 @@ class Item extends React.Component {
 
     const itemName = isEditing ? (
       <ItemNameInput
-        id={id}
+        _id={_id}
         name={name}
         height={height}
         editItem={editItem}
@@ -242,7 +338,7 @@ class Item extends React.Component {
 
     return (
       <div
-        id={`item-${id}`}
+        _id={`item-${_id}`}
         data-height={height}
         data-top={top}
         ref="item"
@@ -271,21 +367,25 @@ class ItemNameInput extends React.Component {
     this.handleKeyDown = this.handleKeyDown.bind(this)
     this.toggleEdit = this.toggleEdit.bind(this)
   }
+
   componentDidMount() {
     this.refs.itemNameTextArea.focus()
   }
+
   handleKeyDown(e) {
     const { value } = e.target
     if (value && e.key === 'Enter') {
       this.props.toggleEdit()
-      this.props.editItem(this.props.id, value)
+      this.props.editItem(this.props._id, value)
     }
   }
+
   toggleEdit(e) {
     const { value } = e.target
     this.props.toggleEdit()
-    this.props.editItem(this.props.id, value)
+    this.props.editItem(this.props._id, value)
   }
+
   render() {
     const { name, height } = this.props
     return (

@@ -1,0 +1,21 @@
+{
+  "name": "todo-app-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Max Appleton",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "mongodb": "^3.1.1",
+    "mongoose": "^5.2.7",
+    "nodemon": "^1.18.3"
+  }
+}

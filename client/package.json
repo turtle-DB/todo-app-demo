@@ -8,13 +8,13 @@
     "start": "webpack-dev-server"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.2.0",
     "axios": "^0.18.0",
     "lodash": "^4.17.10",
     "md5": "^2.2.1",
-    "uuid": "^3.3.2",
-    "@fortawesome/fontawesome-free": "^5.2.0",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
