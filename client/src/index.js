@@ -7,10 +7,13 @@ import '@fortawesome/fontawesome-free/js/all.js';
 import './styles/index.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
+import * as OfflinePluginRuntime from 'offline-plugin/runtime';
+OfflinePluginRuntime.install();
+
 // ********** DIFFERENCES START HERE *********** //
 
-import axios from 'axios';
-// import TurtleDB from './turtleDB/turtleDB';
+// import axios from 'axios';
+import TurtleDB from './turtleDB/turtleDB';
 
 // ********** DIFFERENCES END HERE *********** //
 
@@ -35,10 +38,10 @@ class App extends React.Component {
 
     // ********** DIFFERENCES START HERE *********** //
 
-    this.dbUrl = 'http://localhost:3000/todos';
+    // this.dbUrl = 'http://localhost:3000/todos';
 
-    // this.db = new TurtleDB('todos');
-    // this.db.setRemote('http://localhost:3000');
+    this.db = new TurtleDB('todos');
+    this.db.setRemote('http://localhost:3000');
   }
 
   componentDidMount() {
@@ -46,17 +49,17 @@ class App extends React.Component {
   }
 
   loadAllTodos() {
-    // this.db.readAll()
-    //   .then((todos) => {
-    //     this.setState({ items: todos });
-    //   })
-    //   .catch((err) => console.log('Error:', err));
-
-    axios.get(this.dbUrl)
-      .then(({ data: { todos } }) => {
+    this.db.readAll()
+      .then((todos) => {
         this.setState({ items: todos });
       })
       .catch((err) => console.log('Error:', err));
+
+    // axios.get(this.dbUrl)
+    //   .then(({ data: { todos } }) => {
+    //     this.setState({ items: todos });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
   }
 
   addItem(name) {
@@ -68,20 +71,20 @@ class App extends React.Component {
       isCompleted: false
     };
 
-    // this.db.create(newItem)
-    //   .then((todo) => {
-    //     updatedItems.push(todo);
-    //     this.setState({ items: updatedItems })
-    //   })
-    //   .catch((err) => console.log('Error:', err));
-
-
-    axios.post(this.dbUrl, newItem)
-      .then(({ data: { todo } }) => {
+    this.db.create(newItem)
+      .then((todo) => {
         updatedItems.push(todo);
         this.setState({ items: updatedItems })
       })
       .catch((err) => console.log('Error:', err));
+
+
+    // axios.post(this.dbUrl, newItem)
+    //   .then(({ data: { todo } }) => {
+    //     updatedItems.push(todo);
+    //     this.setState({ items: updatedItems })
+    //   })
+    //   .catch((err) => console.log('Error:', err));
   }
 
   editItem(_id, name) {
@@ -90,19 +93,19 @@ class App extends React.Component {
     const oldItem = oldItems.find(item => item._id === _id);
     const newItem = Object.assign(oldItem, { name: name });
 
-    // this.db.update(_id, newItem)
-    //   .then((updatedTodo) => {
-    //     updatedItems = oldItems.map(item => item._id === _id ? updatedTodo : item);
-    //     this.setState({ items: updatedItems });
-    //   })
-    //   .catch((err) => console.log('Error:', err));
-
-    axios.put(this.dbUrl + '/' + _id, newItem)
-      .then(({ data: { todo } }) => {
-        updatedItems = oldItems.map(item => item._id === _id ? todo : item);
+    this.db.update(_id, newItem)
+      .then((updatedTodo) => {
+        updatedItems = oldItems.map(item => item._id === _id ? updatedTodo : item);
         this.setState({ items: updatedItems });
       })
       .catch((err) => console.log('Error:', err));
+
+    // axios.put(this.dbUrl + '/' + _id, newItem)
+    //   .then(({ data: { todo } }) => {
+    //     updatedItems = oldItems.map(item => item._id === _id ? todo : item);
+    //     this.setState({ items: updatedItems });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
   }
 
   toggleItem(_id) {
@@ -111,42 +114,42 @@ class App extends React.Component {
     const oldItem = oldItems.find(item => item._id === _id);
     const newItem = Object.assign(oldItem, { isCompleted: !oldItem.isCompleted });
 
-    // this.db.update(_id, newItem)
-    //   .then((updatedTodo) => {
-    //     updatedItems = oldItems.map(item => item._id === _id ? updatedTodo : item);
-    //     this.setState({ items: updatedItems });
-    //   })
-    //   .catch((err) => console.log('Error:', err));
-
-    axios.put(this.dbUrl + '/' + _id, newItem)
-      .then(({ data: { todo } }) => {
-        updatedItems = oldItems.map(item => item._id === _id ? todo : item);
+    this.db.update(_id, newItem)
+      .then((updatedTodo) => {
+        updatedItems = oldItems.map(item => item._id === _id ? updatedTodo : item);
         this.setState({ items: updatedItems });
       })
       .catch((err) => console.log('Error:', err));
-  }
 
-  deleteItem(_id) {
-    // this.db.delete(_id)
-    //   .then(() => {
-    //     let updatedItems = [...this.state.items].filter(item => item._id !== _id)
+    // axios.put(this.dbUrl + '/' + _id, newItem)
+    //   .then(({ data: { todo } }) => {
+    //     updatedItems = oldItems.map(item => item._id === _id ? todo : item);
     //     this.setState({ items: updatedItems });
     //   })
     //   .catch((err) => console.log('Error:', err));
+  }
 
-    axios.delete(this.dbUrl + '/' + _id)
-      .then(({ data: { todo } }) => {
+  deleteItem(_id) {
+    this.db.delete(_id)
+      .then(() => {
         let updatedItems = [...this.state.items].filter(item => item._id !== _id)
         this.setState({ items: updatedItems });
       })
       .catch((err) => console.log('Error:', err));
+
+    // axios.delete(this.dbUrl + '/' + _id)
+    //   .then(({ data: { todo } }) => {
+    //     let updatedItems = [...this.state.items].filter(item => item._id !== _id)
+    //     this.setState({ items: updatedItems });
+    //   })
+    //   .catch((err) => console.log('Error:', err));
   }
 
   syncClick() {
-    // this.db.sync()
-    //   .then(() => this.loadAllTodos());
+    this.db.sync()
+      .then(() => this.loadAllTodos());
 
-    this.loadAllTodos();
+    // this.loadAllTodos();
   }
 
   // ********** DIFFERENCES END HERE ********** //

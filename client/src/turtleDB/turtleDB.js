@@ -6,8 +6,6 @@ import SyncFrom from './syncFrom';
 const debug = require('debug');
 var logTo = debug('turtleDB:syncToSummary');
 var logFrom = debug('turtleDB:syncFromSummary');
-var logToBatch = debug('turtleDB:syncToBatch');
-var logFromBatch = debug('turtleDB:syncFromBatch');
 
 // turtleDB specific
 import developerAPI from './developerAPI';

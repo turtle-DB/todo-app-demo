@@ -1,4 +1,9 @@
 const path = require('path');
+const OfflinePlugin = require('offline-plugin');
+
+const offline = new OfflinePlugin({
+  externals: ['index.html', '/images/list.png'],
+});
 
 module.exports = {
   entry: './src/index.js',
@@ -19,5 +24,6 @@ module.exports = {
   devtool: 'cheap-module-eval-source-map',
   devServer: {
     contentBase: path.join(__dirname, '/public')
-  }
+  },
+  plugins: [offline]
 };
