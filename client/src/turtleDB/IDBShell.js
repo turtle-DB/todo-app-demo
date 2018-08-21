@@ -1,5 +1,4 @@
 import uuidv4 from 'uuid/v4';
-// import turtleDB from './turtle'
 
 class IDBShell {
   constructor(name) {
@@ -93,52 +92,6 @@ class IDBShell {
       );
   }
 
-  // deleteBetweenNumbers(start, end) {
-  //   return new Promise((resolve, reject) => {
-  //     let deletePromises = [];
-  //     let counter = 0;
-  //     this.getStore(this._meta, 'readonly').openCursor().onsuccess = e => {
-  //       const cursor = e.target.result;
-  //       if (!cursor) {
-  //         console.log("cursor finished!");
-  //         resolve(Promise.all(deletePromises));
-  //       } else {
-  //         if (!!e.target.result.value._winningRev && counter >= start && counter < end) {
-  //           const _id = e.target.result.value._id;
-  //           deletePromises.push(turtleDB.delete(_id));
-  //           counter += 1;
-  //         }
-  //         cursor.continue()
-  //       }
-  //     }
-  //   })
-  // }
-
-  // editFirstNDocuments(n) {
-  //   return new Promise((resolve, reject) => {
-  //     let updatePromises = [];
-  //     let counter = 0;
-  //       this.getStore(this._meta, 'readonly').openCursor().onsuccess = e => {
-  //         const cursor = e.target.result;
-  //         if (!cursor) {
-  //           console.log('Cursor finished!');
-  //           resolve(Promise.all(updatePromises));
-  //         } else {
-  //           if (!!e.target.result.value._winningRev && counter < n) {
-  //             const _id = e.target.result.value._id;
-  //             updatePromises.push(
-  //               turtleDB.read(_id)
-  //               .then(d => Object.assign(d, { age: Math.floor(Math.random() * 100 + 1) }))
-  //               .then(data => turtleDB.update(_id, data))
-  //           );
-  //         }
-  //         counter++;
-  //         cursor.continue();
-  //       }
-  //     }
-  //   })
-  // }
-
   getStoreDocsByIdRevs(idRevsArr) {
     const promises = idRevsArr.map(_id_rev => {
       return this.command(this._store, "INDEX_READ", { data: { indexName: '_id_rev', key: _id_rev } });
@@ -189,11 +142,12 @@ class IDBShell {
     return this.ready;
   }
 
-  dropDB() {
+  dropDB(name) {
     return new Promise((resolve, reject) => {
-      const deleteRequest = window.indexedDB.deleteDatabase('turtleDB');
+      const deleteRequest = window.indexedDB.deleteDatabase(`turtleDB-${name}`);
+      console.log(name);
       deleteRequest.onsuccess = e => {
-        console.log('turtleDB was deleted successfully.');
+        console.log(`turtleDB-${name} was deleted successfully.`);
         resolve();
       }
       deleteRequest.onerror = e => {

@@ -13,7 +13,7 @@ OfflinePluginRuntime.install();
 // ********** DIFFERENCES START HERE *********** //
 
 // import axios from 'axios';
-import TurtleDB from './turtleDB/turtleDB';
+import TurtleDB from './turtleDB/turtle.js';
 
 // ********** DIFFERENCES END HERE *********** //
 
