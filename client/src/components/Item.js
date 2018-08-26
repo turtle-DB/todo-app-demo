@@ -1,5 +1,7 @@
 import React from 'react';
 
+import ItemNameInput from './ItemNameInput';
+
 class Item extends React.Component {
   constructor(props) {
     super(props)
@@ -11,8 +13,8 @@ class Item extends React.Component {
   }
 
   componentDidMount() {
-    const height = this.refs.item.getBoundingClientRect().height
-    this.props.setItemHeight(this.props._id, height)
+    const height = this.refs.item.getBoundingClientRect().height;
+    this.props.setItemHeight(this.props._id, height);
   }
 
   getTop() {
@@ -32,9 +34,20 @@ class Item extends React.Component {
     this.setState({ isEditing: !this.state.isEditing })
   }
 
+  conditionalConflictIcon(hasConflict) {
+    if (hasConflict) {
+      return (
+        <div className="item-conflict" onClick={this.props.handleConflictClick}>
+          <i className="fas fa-exclamation-triangle" />
+        </div>
+      )
+    }
+  }
+
   render() {
-    const { name, _id, height, index, isCompleted, toggleItem, deleteItem, editItem } = this.props
-    const { isEditing } = this.state
+    const { name, _id, height, index, toggleItem, deleteItem, editItem } = this.props;
+    const { isCompleted, hasConflict, conflictVersions } = this.props;
+    const { isEditing } = this.state;
     let classes = isCompleted ? "item completed" : "item",
       top = this.getTop()
 
@@ -74,6 +87,7 @@ class Item extends React.Component {
         <div className="item-delete" onClick={deleteItem}>
           <i className="fas fa-times-circle" />
         </div>
+        {this.conditionalConflictIcon(hasConflict)}
       </div>
     )
   }

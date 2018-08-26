@@ -99,7 +99,8 @@ body {
   padding: 20px;
   padding-left: 40px;
 }
-#app #items-outer-container #items-container #add-item-input svg, #app #items-outer-container #items-container #add-item-input input {
+#app #items-outer-container #items-container #add-item-input svg,
+#app #items-outer-container #items-container #add-item-input input {
   display: inline-block;
   vertical-align: top;
 }
@@ -139,7 +140,8 @@ body {
 #app #items-outer-container #items-container #items .item:hover .item-name-input textarea {
   background-color: transparent;
 }
-#app #items-outer-container #items-container #items .item:hover .item-edit, #app #items-outer-container #items-container #items .item:hover .item-delete {
+#app #items-outer-container #items-container #items .item:hover .item-edit,
+#app #items-outer-container #items-container #items .item:hover .item-delete {
   opacity: 1;
 }
 #app #items-outer-container #items-container #items .item.completed .item-icon:hover .completed path {
@@ -161,17 +163,24 @@ body {
   opacity: 0;
   pointer-events: none;
 }
-#app #items-outer-container #items-container #items .item.editing .item-edit {
+#app #items-outer-container #items-container #items .item.editing .item-edit,
+#app #items-outer-container #items-container #items .item.editing .item-conflict {
   opacity: 0;
   pointer-events: none;
 }
-#app #items-outer-container #items-container #items .item .item-name, #app #items-outer-container #items-container #items .item .item-icon, #app #items-outer-container #items-container #items .item .item-edit, #app #items-outer-container #items-container #items .item .item-name-input, #app #items-outer-container #items-container #items .item .item-delete {
+#app #items-outer-container #items-container #items .item .item-name,
+#app #items-outer-container #items-container #items .item .item-icon,
+#app #items-outer-container #items-container #items .item .item-edit,
+#app #items-outer-container #items-container #items .item .item-name-input,
+#app #items-outer-container #items-container #items .item .item-delete,
+#app #items-outer-container #items-container #items .item .item-conflict {
   display: inline-block;
   vertical-align: top;
 }
+
 #app #items-outer-container #items-container #items .item .item-name {
   margin-left: 20px;
-  width: calc(100% - 120px);
+  width: calc(100% - 160px);
 }
 #app #items-outer-container #items-container #items .item .item-name h1 {
   color: #3c3c3c;
@@ -210,21 +219,34 @@ body {
 #app #items-outer-container #items-container #items .item .item-icon svg.uncompleted path {
   fill: #3c3c3c;
 }
-#app #items-outer-container #items-container #items .item .item-edit, #app #items-outer-container #items-container #items .item .item-delete {
+#app #items-outer-container #items-container #items .item .item-edit,
+#app #items-outer-container #items-container #items .item .item-delete,
+#app #items-outer-container #items-container #items .item .item-conflict {
   cursor: pointer;
   height: 18px;
   line-height: 18px;
   margin-left: 20px;
-  opacity: 0;
   position: relative;
   text-align: center;
   width: 18px;
   z-index: 2;
 }
-#app #items-outer-container #items-container #items .item .item-edit:hover svg path, #app #items-outer-container #items-container #items .item .item-delete:hover svg path {
+#app #items-outer-container #items-container #items .item .item-edit,
+#app #items-outer-container #items-container #items .item .item-delete {
+  opacity: 0;
+}
+
+#app #items-outer-container #items-container #items .item .item-edit:hover svg path,
+#app #items-outer-container #items-container #items .item .item-delete:hover svg path {
   fill: #43efa9;
 }
-#app #items-outer-container #items-container #items .item .item-edit svg, #app #items-outer-container #items-container #items .item .item-delete svg {
+#app #items-outer-container #items-container #items .item .item-conflict:hover svg path {
+  fill: #cc3300;
+}
+
+#app #items-outer-container #items-container #items .item .item-edit svg,
+#app #items-outer-container #items-container #items .item .item-delete svg,
+#app #items-outer-container #items-container #items .item .item-conflict svg {
   height: 18px;
   line-height: 18px;
   position: relative;
@@ -233,8 +255,12 @@ body {
   z-index: 1;
 }
 
-#app #items-outer-container #items-container #items .item .item-edit svg path, #app #items-outer-container #items-container #items .item .item-delete svg path {
+#app #items-outer-container #items-container #items .item .item-edit svg path,
+#app #items-outer-container #items-container #items .item .item-delete svg path {
   fill: #3c3c3c;
+}
+#app #items-outer-container #items-container #items .item .item-conflict svg path {
+  fill: #ffcc00;
 }
 
 #app #items-outer-container #items-container #items .item .item-name-input {
@@ -277,7 +303,8 @@ body {
   padding: 20px;
   padding-left: 60px;
 }
-#app #items-outer-container #items-container #items #items-uncompleted__spacer, #app #items-outer-container #items-container #items #items-completed__spacer {
+#app #items-outer-container #items-container #items #items-uncompleted__spacer,
+#app #items-outer-container #items-container #items #items-completed__spacer {
   transition: all 0.5s;
   width: 100%;
 }

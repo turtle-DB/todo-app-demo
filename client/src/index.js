@@ -9,9 +9,8 @@ import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 OfflinePluginRuntime.install();
 
 //components
-import Item from './components/Item';
-import AddItemInput from './components/AddItemInput';
-import ItemNameInput from './components/ItemNameInput';
+import ItemsContainer from './components/ItemsContainer';
+
 
 // ********** Commented code shows server calls replaced with turtledb ********** //
 
@@ -22,13 +21,11 @@ import TurtleDB from 'turtledb';
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.getMeta = this.getMeta.bind(this)
     this.toggleItem = this.toggleItem.bind(this)
     this.addItem = this.addItem.bind(this)
     this.editItem = this.editItem.bind(this)
     this.deleteItem = this.deleteItem.bind(this)
     this.setItemHeight = this.setItemHeight.bind(this)
-    this.getItemCountText = this.getItemCountText.bind(this)
     this.syncClick = this.syncClick.bind(this);
     this.loadAllTodos = this.loadAllTodos.bind(this);
     this.state = {
@@ -167,81 +164,54 @@ class App extends React.Component {
     this.setState({ items: updatedItems })
   }
 
-  getItemCountText() {
-    const meta = this.getMeta()
-    let itemCountText = ''
-    if (meta.completed.items.length === 0) {
-      itemCountText = 'No completed items'
-    }
-    else if (meta.completed.items.length >= 1) {
-      const pluralText = meta.completed.items.length === 1 ? 'item' : 'items'
-      itemCountText = `${meta.completed.items.length} completed ${pluralText}`
-    }
-    return itemCountText
-  }
+  // getItemCountText() {
+  //   const meta = this.getMeta()
+  //   let itemCountText = ''
+  //   if (meta.completed.items.length === 0) {
+  //     itemCountText = 'No completed items'
+  //   }
+  //   else if (meta.completed.items.length >= 1) {
+  //     const pluralText = meta.completed.items.length === 1 ? 'item' : 'items'
+  //     itemCountText = `${meta.completed.items.length} completed ${pluralText}`
+  //   }
+  //   return itemCountText
+  // }
 
-  getMeta() {
-    const { items } = this.state;
-    const completed = items.filter(item => item.isCompleted);
-    const uncompleted = items.filter(item => !item.isCompleted);
+  // getMeta() {
+  //   const { items } = this.state;
+  //   const completed = items.filter(item => item.isCompleted);
+  //   const uncompleted = items.filter(item => !item.isCompleted);
+  //
+  //   return {
+  //     completed: {
+  //       items: completed,
+  //       height: completed.length > 0 ? _.sumBy(completed, 'height') : 0
+  //     },
+  //     uncompleted: {
+  //       items: uncompleted,
+  //       height: uncompleted.length > 0 ? _.sumBy(uncompleted, 'height') : 0
+  //     }
+  //   }
+  // }
 
-    return {
-      completed: {
-        items: completed,
-        height: completed.length > 0 ? _.sumBy(completed, 'height') : 0
-      },
-      uncompleted: {
-        items: uncompleted,
-        height: uncompleted.length > 0 ? _.sumBy(uncompleted, 'height') : 0
-      }
-    }
+  handleConflictClick = (item) => {
+    this.setState({ selectedItem: item });
+    // this.setState({ selectedItemVersion: null });
   }
 
   render() {
-    const meta = this.getMeta();
-
-    let uInd = 0, cInd = 0;
-
-    const items = this.state.items
-      .map((item, index) => (
-        <Item
-          key={item._id}
-          _id={item._id}
-          index={item.isCompleted ? cInd++ : uInd++}
-          height={item.height}
-          name={item.name}
-          meta={meta}
-          isCompleted={item.isCompleted}
-          toggleItem={() => this.toggleItem(item._id)}
-          editItem={this.editItem}
-          deleteItem={() => this.deleteItem(item._id)}
-          setItemHeight={this.setItemHeight}
-        />
-      ))
-
-    const itemCountText = this.getItemCountText()
 
     return (
       <div id="app">
-        <div id="items-outer-container">
-          <div id="items-container" className="scroll-bar">
-            <AddItemInput addItem={this.addItem} />
-            <div id="items">
-              <div
-                id="items-uncompleted__spacer"
-                style={{ height: `${meta.uncompleted.height}px` }}
-              />
-              {items}
-              <div id="items-completed__header">
-                <h1>{itemCountText}</h1>
-              </div>
-              <div
-                id="items-completed__spacer"
-                style={{ height: `${meta.completed.height}px` }}
-              />
-            </div>
-          </div>
-        </div>
+        <ItemsContainer
+          items={this.state.items}
+          addItem={this.addItem}
+          editItem={this.editItem}
+          toggleItem={this.toggleItem}
+          deleteItem={this.deleteItem}
+          setItemHeight={this.setItemHeight}
+          handleConflictClick={this.handleConflictClick}
+        />
         <div id="app__background-accent" />
         <div id="hints">
           <div id="hint-title">
