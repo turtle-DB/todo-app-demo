@@ -8,6 +8,9 @@ import '@fortawesome/fontawesome-free/css/fontawesome.css';
 import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 OfflinePluginRuntime.install();
 
+// ********** Commented code shows server calls replaced with turtledb ********** //
+
+//import axios from 'axios';
 import TurtleDB from 'turtledb';
 
 
@@ -30,6 +33,7 @@ class App extends React.Component {
       items: []
     }
 
+    //this.dbUrl = 'http://localhost:3000/todos';
     this.db = new TurtleDB('todos');
     this.db.setRemote('http://localhost:3000');
   }
@@ -37,8 +41,6 @@ class App extends React.Component {
   componentDidMount() {
     this.loadAllTodos();
   }
-
-  // ********** REPLACING SERVER WITH TURTLEDB CALLS STARTS HERE ********** //
 
   loadAllTodos() {
     this.db.readAll()
@@ -144,7 +146,7 @@ class App extends React.Component {
     // this.loadAllTodos();
   }
 
-  // ********** REPLACING SERVER WITH TURTLEDB CALLS END HERE ********** //
+  // ********** turtledb/server code replacement ends here ********** //
 
   setItemHeight(id, height) {
     const updatedItems = this.state.items
