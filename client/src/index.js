@@ -3,19 +3,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import '@fortawesome/fontawesome-free/js/all.js';
-
 import './styles/index.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
-
 import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 OfflinePluginRuntime.install();
 
-// ********** DIFFERENCES START HERE *********** //
+import TurtleDB from 'turtledb';
 
-// import axios from 'axios';
-import TurtleDB from './turtleDB/turtle.js';
-
-// ********** DIFFERENCES END HERE *********** //
 
 class App extends React.Component {
   constructor(props) {
@@ -36,10 +30,6 @@ class App extends React.Component {
       items: []
     }
 
-    // ********** DIFFERENCES START HERE *********** //
-
-    // this.dbUrl = 'http://localhost:3000/todos';
-
     this.db = new TurtleDB('todos');
     this.db.setRemote('http://localhost:3000');
   }
@@ -47,6 +37,8 @@ class App extends React.Component {
   componentDidMount() {
     this.loadAllTodos();
   }
+
+  // ********** REPLACING SERVER WITH TURTLEDB CALLS STARTS HERE ********** //
 
   loadAllTodos() {
     this.db.readAll()
@@ -152,7 +144,7 @@ class App extends React.Component {
     // this.loadAllTodos();
   }
 
-  // ********** DIFFERENCES END HERE ********** //
+  // ********** REPLACING SERVER WITH TURTLEDB CALLS END HERE ********** //
 
   setItemHeight(id, height) {
     const updatedItems = this.state.items

@@ -14,6 +14,7 @@
     "md5": "^2.2.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "turtledb": "^1.0.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
