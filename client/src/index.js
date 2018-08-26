@@ -143,7 +143,7 @@ class App extends React.Component {
     this.db.sync()
       .then(() => this.loadAllTodos());
 
-    // this.loadAllTodos();
+    //this.loadAllTodos();
   }
 
   // ********** turtledb/server code replacement ends here ********** //
