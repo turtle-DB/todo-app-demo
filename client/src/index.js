@@ -8,6 +8,11 @@ import '@fortawesome/fontawesome-free/css/fontawesome.css';
 import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 OfflinePluginRuntime.install();
 
+//components
+import Item from './components/Item';
+import AddItemInput from './components/AddItemInput';
+import ItemNameInput from './components/ItemNameInput';
+
 // ********** Commented code shows server calls replaced with turtledb ********** //
 
 //import axios from 'axios';
@@ -34,7 +39,10 @@ class App extends React.Component {
     }
 
     //this.dbUrl = 'http://localhost:3000/todos';
-    this.db = new TurtleDB('todos');
+
+    //this.db = new TurtleDB('todos');
+    window.turtledb = new TurtleDB('todos');
+    this.db = window.turtledb;
     this.db.setRemote('http://localhost:3000');
   }
 
@@ -190,9 +198,9 @@ class App extends React.Component {
   }
 
   render() {
-    const meta = this.getMeta()
+    const meta = this.getMeta();
 
-    let uInd = 0, cInd = 0
+    let uInd = 0, cInd = 0;
 
     const items = this.state.items
       .map((item, index) => (
@@ -254,154 +262,6 @@ class App extends React.Component {
             onClick={this.syncClick}
           >Sync</button>
         </div>
-      </div>
-    )
-  }
-}
-
-class AddItemInput extends React.Component {
-  constructor(props) {
-    super(props)
-    this.handleKeyDown = this.handleKeyDown.bind(this)
-  }
-  handleKeyDown(e) {
-    const { value } = e.target
-    if (value && e.key === 'Enter') {
-      this.props.addItem(value)
-      this.refs.addItemInput.value = ''
-    }
-  }
-  render() {
-    const { handleKeyDown } = this.props
-    return (
-      <div id="add-item-input">
-        <i className="fas fa-plus" />
-        <input
-          ref="addItemInput"
-          type="text"
-          placeholder="Add item"
-          onKeyDown={this.handleKeyDown}
-        />
-      </div>
-    )
-  }
-}
-
-class Item extends React.Component {
-  constructor(props) {
-    super(props)
-    this.getTop = this.getTop.bind(this)
-    this.toggleEdit = this.toggleEdit.bind(this)
-    this.state = {
-      isEditing: false
-    }
-  }
-
-  componentDidMount() {
-    const height = this.refs.item.getBoundingClientRect().height
-    this.props.setItemHeight(this.props._id, height)
-  }
-
-  getTop() {
-    const { meta, _id, index, height, isCompleted } = this.props
-
-    const prevHeight = isCompleted ?
-      _.sumBy(meta.completed.items.slice(0, index), 'height') :
-      _.sumBy(meta.uncompleted.items.slice(0, index), 'height'),
-      top = isCompleted ?
-        meta.uncompleted.height + prevHeight + 80 :
-        prevHeight
-
-    return top
-  }
-
-  toggleEdit() {
-    this.setState({ isEditing: !this.state.isEditing })
-  }
-
-  render() {
-    const { name, _id, height, index, isCompleted, toggleItem, deleteItem, editItem } = this.props
-    const { isEditing } = this.state
-    let classes = isCompleted ? "item completed" : "item",
-      top = this.getTop()
-
-    classes = isEditing ? `${classes} editing` : classes
-
-    const itemName = isEditing ? (
-      <ItemNameInput
-        _id={_id}
-        name={name}
-        height={height}
-        editItem={editItem}
-        toggleEdit={this.toggleEdit}
-      />
-    ) : (
-        <div className="item-name" onDoubleClick={!isCompleted ? this.toggleEdit : null}>
-          <h1>{name}</h1>
-        </div>
-      )
-
-    return (
-      <div
-        _id={`item-${_id}`}
-        data-height={height}
-        data-top={top}
-        ref="item"
-        className={classes}
-        style={{ top: `${top}px` }}
-      >
-        <div className="item-icon" onClick={toggleItem}>
-          <i className="far fa-circle uncompleted" />
-          <i className="fas fa-check completed" />
-        </div>
-        {itemName}
-        <div className="item-edit" onClick={this.toggleEdit}>
-          <i className="fas fa-pen" />
-        </div>
-        <div className="item-delete" onClick={deleteItem}>
-          <i className="fas fa-times-circle" />
-        </div>
-      </div>
-    )
-  }
-}
-
-class ItemNameInput extends React.Component {
-  constructor(props) {
-    super(props)
-    this.handleKeyDown = this.handleKeyDown.bind(this)
-    this.toggleEdit = this.toggleEdit.bind(this)
-  }
-
-  componentDidMount() {
-    this.refs.itemNameTextArea.focus()
-  }
-
-  handleKeyDown(e) {
-    const { value } = e.target
-    if (value && e.key === 'Enter') {
-      this.props.toggleEdit()
-      this.props.editItem(this.props._id, value)
-    }
-  }
-
-  toggleEdit(e) {
-    const { value } = e.target
-    this.props.toggleEdit()
-    this.props.editItem(this.props._id, value)
-  }
-
-  render() {
-    const { name, height } = this.props
-    return (
-      <div className="item-name-input" style={{ height: `${height - 40}px` }} >
-        <textarea
-          ref="itemNameTextArea"
-          defaultValue={name}
-          style={{ height: `${height - 40}px` }}
-          onKeyDown={this.handleKeyDown}
-          onBlur={this.toggleEdit}
-        />
       </div>
     )
   }
