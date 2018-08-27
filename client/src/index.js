@@ -4,13 +4,14 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import '@fortawesome/fontawesome-free/js/all.js';
 import './styles/index.css';
+import './styles/conflicts.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 OfflinePluginRuntime.install();
 
 //components
 import ItemsContainer from './components/ItemsContainer';
-
+import ConflictsContainer from './components/ConflictsContainer';
 
 // ********** Commented code shows server calls replaced with turtledb ********** //
 
@@ -164,39 +165,19 @@ class App extends React.Component {
     this.setState({ items: updatedItems })
   }
 
-  // getItemCountText() {
-  //   const meta = this.getMeta()
-  //   let itemCountText = ''
-  //   if (meta.completed.items.length === 0) {
-  //     itemCountText = 'No completed items'
-  //   }
-  //   else if (meta.completed.items.length >= 1) {
-  //     const pluralText = meta.completed.items.length === 1 ? 'item' : 'items'
-  //     itemCountText = `${meta.completed.items.length} completed ${pluralText}`
-  //   }
-  //   return itemCountText
-  // }
-
-  // getMeta() {
-  //   const { items } = this.state;
-  //   const completed = items.filter(item => item.isCompleted);
-  //   const uncompleted = items.filter(item => !item.isCompleted);
-  //
-  //   return {
-  //     completed: {
-  //       items: completed,
-  //       height: completed.length > 0 ? _.sumBy(completed, 'height') : 0
-  //     },
-  //     uncompleted: {
-  //       items: uncompleted,
-  //       height: uncompleted.length > 0 ? _.sumBy(uncompleted, 'height') : 0
-  //     }
-  //   }
-  // }
-
   handleConflictClick = (item) => {
-    this.setState({ selectedItem: item });
+    this.setState({ selectedConflict: item });
     // this.setState({ selectedItemVersion: null });
+  }
+
+  handlePickWinnerClick = (item) => {
+    this.db.setConflictWinner(item)
+      .then(() => this.clearSelectedConflict())
+      .then(() => this.loadAllTodos());
+  }
+
+  clearSelectedConflict = () => {
+    this.setState({ selectedConflict: null });
   }
 
   render() {
@@ -211,6 +192,12 @@ class App extends React.Component {
           deleteItem={this.deleteItem}
           setItemHeight={this.setItemHeight}
           handleConflictClick={this.handleConflictClick}
+        />
+        <ConflictsContainer
+          selectedConflict={this.state.selectedConflict}
+          setItemHeight={this.setItemHeight}
+          handlePickWinnerClick={this.handlePickWinnerClick}
+          clearSelectedConflict={this.clearSelectedConflict}
         />
         <div id="app__background-accent" />
         <div id="hints">

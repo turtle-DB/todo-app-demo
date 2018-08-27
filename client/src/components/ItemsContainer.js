@@ -6,7 +6,7 @@ import AddItemInput from './AddItemInput';
 class ItemsContainer extends React.Component {
   constructor(props) {
     super(props);
-    //this.getItemCountText = this.getItemCountText.bind(this);
+    this.getItemCountText = this.getItemCountText.bind(this);
   }
 
   getItemCountText() {
@@ -60,7 +60,7 @@ class ItemsContainer extends React.Component {
           editItem={this.props.editItem}
           deleteItem={() => this.props.deleteItem(item._id)}
           setItemHeight={this.props.setItemHeight}
-          handleConflictClick={() => this.handleConflictClick(item)}
+          handleConflictClick={() => this.props.handleConflictClick(item)}
         />
       ))
 

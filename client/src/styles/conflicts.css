@@ -1,0 +1,181 @@
+@import url("./normalize.css");
+
+#app #conflicts-outer-container {
+  animation: fadeIn 0.5s ease-in;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 10px, rgba(0, 0, 0, 0.23) 0px 3px 10px;
+  left: 75%;
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 10;
+}
+#app #conflicts-outer-container #conflicts-container {
+  max-height: 600px;
+  overflow: auto;
+  width: 460px;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts {
+  margin: 20px;
+  margin-top: 0px;
+  overflow: hidden;
+  position: relative;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict {
+  left: 0px;
+  padding: 20px;
+  position: absolute;
+  transition: all 0.5s, background-color 0s;
+  width: calc(100% - 40px);
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict:hover {
+  background-color: rgba(230, 230, 230, 0.4);
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict:hover .conflict-name-input textarea {
+  background-color: transparent;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict:hover .conflict-edit,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict:hover .conflict-pick {
+  opacity: 1;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.completed .conflict-icon:hover .completed path {
+  fill: #3c3c3c;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.completed .conflict-icon .completed {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-50%) scale(1);
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.completed .conflict-icon .uncompleted {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-50%) scale(0.25);
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.completed .conflict-name h1 {
+  color: #c8c8c8;
+  text-decoration: line-through;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.completed .conflict-edit {
+  opacity: 0;
+  pointer-events: none;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.editing .conflict-edit,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict.editing .conflict-conflict {
+  opacity: 0;
+  pointer-events: none;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-name,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-edit,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-name-input,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-conflict {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-name {
+  margin-left: 20px;
+  width: calc(100% - 120px);
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-name h1 {
+  color: #3c3c3c;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0px;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon {
+  cursor: pointer;
+  height: 20px;
+  position: relative;
+  width: 20px;
+  z-index: 2;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon:hover svg.uncompleted path {
+  fill: #43efa9 !important;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon svg {
+  height: 18px;
+  left: 50%;
+  line-height: 18px;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%) scale(1);
+  transition: all 0.5s;
+  width: 18px;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon svg.completed {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-50%) scale(0.25);
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon svg.completed path {
+  fill: #43efa9;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-icon svg.uncompleted path {
+  fill: #3c3c3c;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick {
+  cursor: pointer;
+  background: #43efa9;
+  border-radius: 5px;
+  color: white;
+  height: 25px;
+  line-height: 25px;
+  float: right;
+  text-align: center;
+  width: 40px;
+  z-index: 2;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-edit,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick {
+  opacity: 0;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-edit:hover svg path,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick:hover svg path {
+  fill: #43efa9;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-conflict:hover svg path {
+  fill: #cc3300;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-edit svg,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick svg,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-conflict svg {
+  height: 18px;
+  line-height: 18px;
+  position: relative;
+  text-align: center;
+  width: 18px;
+  z-index: 1;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-edit svg path,
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick svg path {
+  fill: #3c3c3c;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-conflict svg path {
+  fill: #ffcc00;
+}
+
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-name-input {
+  margin-left: 20px;
+  width: calc(100% - 80px);
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-name-input textarea {
+  border: none;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 20px;
+  outline: none;
+  padding: 0px;
+  resize: none;
+  width: 100%;
+}
+#app #conflicts-outer-container #conflicts-container #conflicts .conflict .conflict-pick:hover svg path {
+  fill: #d32f2f;
+}
